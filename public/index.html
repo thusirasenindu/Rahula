@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rahula College Football - Matchday Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --bg: #050508;
+      --panel: #080c14;
+      --p2: #0c1020;
+      --p3: #101528;
+      --blue: #1e6fff;
+      --blue2: #0051cc;
+      --gold: #d4af37;
+      --gold2: #f5d76e;
+      --text: #eef2ff;
+      --muted: #5a6a8a;
+      --border: rgba(255,255,255,0.06);
+      --bdr-b: rgba(30,111,255,0.25);
+      --bdr-g: rgba(212,175,55,0.25);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --primary-glow: rgba(30, 111, 255, 0.15);
+      --pulse-glow: rgba(239, 68, 68, 0.4);
+    }
+
+    body {
+      background: radial-gradient(circle at top, rgba(30, 111, 255, 0.1) 0%, transparent 50%), var(--bg);
+    }
+
+    /* Sticky Top Navigation */
+    .hub-header {
+      background: rgba(8, 12, 20, 0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(15px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+    }
+
+    .hub-header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hub-branding {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hub-crest {
+      height: 42px;
+      width: auto;
+    }
+
+    .hub-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 0.05em;
+      color: var(--blue);
+    }
+
+    .hub-title span {
+      color: var(--gold);
+    }
+
+    .hub-selector-wrap {
+      flex: 0 1 380px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hub-selector-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Dashboard Grid */
+    .hub-grid {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 992px) {
+      .hub-grid {
+        grid-template-columns: 1.6fr 1fr;
+      }
+    }
+
+    /* Hero Match Card */
+    .hub-hero-card {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--panel) 0%, var(--p2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .hub-hero-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(30, 111, 255, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 1rem;
+    }
+
+    .hero-meta-items {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-scoreboard {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .hero-team {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-team-logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-team-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 200px;
+    }
+
+    .hero-score-box {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-score-dash {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 3.5rem;
+    }
+
+    .hero-timer {
+      font-family: 'Black Ops One', cursive;
+      font-size: 1.6rem;
+      color: var(--accent);
+      background: rgba(63, 169, 245, 0.08);
+      border: 1px solid rgba(63, 169, 245, 0.2);
+      padding: 0.35rem 1.25rem;
+      border-radius: 10px;
+      text-shadow: 0 0 10px rgba(63, 169, 245, 0.3);
+      letter-spacing: 0.05em;
+      margin-top: 0.5rem;
+    }
+
+    .hero-timer.live {
+      color: var(--success);
+      border-color: rgba(69, 178, 107, 0.3);
+      background: rgba(69, 178, 107, 0.08);
+      text-shadow: 0 0 10px rgba(69, 178, 107, 0.3);
+    }
+
+    /* Live Ticker Commentaries */
+    .hub-ticker {
+      margin-top: 1.5rem;
+      background: rgba(8, 16, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .ticker-pulse-hub {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 8px var(--danger);
+      animation: ticker-pulse-anim 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes ticker-pulse-anim {
+      0%, 100% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px var(--danger); }
+    }
+
+    .ticker-content {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* Interactive Comparison Stats */
+    .hub-section-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .hub-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Stats Bars styling */
+    .hub-stat-row {
+      margin-bottom: 1.25rem;
+    }
+
+    .hub-stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .hub-stat-label-wrap {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .hub-stat-label-center {
+      color: var(--text);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hub-stat-progress {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .hub-stat-progress-home {
+      background: linear-gradient(90deg, var(--blue), var(--blue2));
+      transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    .hub-stat-progress-away {
+      background: linear-gradient(90deg, var(--gold2), var(--gold));
+      transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    /* Navigation Action Cards */
+    .hub-nav-cards {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .hub-nav-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .hub-nav-card {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--p2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .hub-nav-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--blue);
+      box-shadow: 0 12px 30px rgba(30, 111, 255, 0.15);
+    }
+
+    .hub-nav-icon {
+      font-size: 2.5rem;
+      background: rgba(30, 111, 255, 0.08);
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--bdr-b);
+      flex-shrink: 0;
+    }
+
+    .hub-nav-card:hover .hub-nav-icon {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    .hub-nav-details h4 {
+      margin: 0 0 0.25rem 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hub-nav-details p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Roster Lineup display in hub */
+    .hub-lineups-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .hub-squad-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hub-squad-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .hub-squad-title.home { color: var(--home-color); }
+    .hub-squad-title.away { color: var(--away-color); }
+
+    .hub-player-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .hub-player-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .hub-jersey-num {
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 22px;
+    }
+
+    .hub-player-pos {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header Navigation -->
+  <header class="hub-header">
+    <div class="hub-header-container">
+      <div class="hub-branding">
+        <img class="hub-crest" src="/Rahula-Crest-SinhalaRGB.png" alt="Crest" onerror="this.src='https://placehold.co/50/1a1a2e/ffffff?text=RC'">
+        <h1 class="hub-title">RAHULA<span>MATCHDAY</span></h1>
+      </div>
+
+      <div class="hub-selector-wrap">
+        <span class="hub-selector-label">Broadcast Arena</span>
+        <select id="hubMatchSelect" class="admin-form-select" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+          <option value="">Loading Matches...</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Container -->
+  <main class="hub-grid">
+
+    <!-- Hero scoreboard centerpiece -->
+    <section class="hub-hero-card" id="heroScoreboardSection">
+      <div class="hero-meta-bar">
+        <div class="hero-meta-items">
+          <span id="heroVenue">📍 Loading venue...</span>
+          <span id="heroReferee">👤 Referee: --</span>
+          <span id="heroDate">📅 Date: --</span>
+        </div>
+        <span class="badge-status" id="heroStatusBadge" style="background: rgba(255,255,255,0.05); color: var(--text);">SCHEDULED</span>
+      </div>
+
+      <div class="hero-scoreboard">
+        <!-- Home Team -->
+        <div class="hero-team">
+          <img id="heroHomeLogo" class="hero-team-logo" src="" alt="Home Team" onerror="this.src='https://placehold.co/100/1a1a2e/ffffff?text=HOME'">
+          <h2 class="hero-team-name" id="heroHomeName">Home</h2>
+        </div>
+
+        <!-- Score & Clock -->
+        <div class="hero-center">
+          <div class="hero-score-box">
+            <span id="heroHomeScore">0</span>
+            <span class="hero-score-dash">−</span>
+            <span id="heroAwayScore">0</span>
+          </div>
+          <div class="hero-timer" id="heroTimerClock">00:00</div>
+        </div>
+
+        <!-- Away Team -->
+        <div class="hero-team">
+          <img id="heroAwayLogo" class="hero-team-logo" src="" alt="Away Team" onerror="this.src='https://placehold.co/100/1a1a2e/ffffff?text=AWAY'">
+          <h2 class="hero-team-name" id="heroAwayName">Away</h2>
+        </div>
+      </div>
+
+      <!-- Live Commentary Ticker -->
+      <div class="hub-ticker">
+        <div class="ticker-pulse-hub"></div>
+        <span class="ticker-content" id="heroTickerText">Waiting for match updates...</span>
+      </div>
+    </section>
+
+    <!-- Left Column: Match Statistics comparison progress bars -->
+    <section class="hub-section-card" id="hubStatsSection">
+      <h3 class="hub-section-title">📊 Match Statistics</h3>
+      <div class="hub-stats-container" id="hubStatsContainer">
+        
+        <!-- Possession -->
+        <div class="hub-stat-row">
+          <div class="hub-stat-label-wrap">
+            <span id="hubStatPossHome">50%</span>
+            <span class="hub-stat-label-center">Possession</span>
+            <span id="hubStatPossAway">50%</span>
+          </div>
+          <div class="hub-stat-progress">
+            <div class="hub-stat-progress-home" id="hubBarPossHome" style="width: 50%;"></div>
+            <div class="hub-stat-progress-away" id="hubBarPossAway" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <!-- Shots on Target -->
+        <div class="hub-stat-row">
+          <div class="hub-stat-label-wrap">
+            <span id="hubStatShotsHome">0</span>
+            <span class="hub-stat-label-center">Shots on Target</span>
+            <span id="hubStatShotsAway">0</span>
+          </div>
+          <div class="hub-stat-progress">
+            <div class="hub-stat-progress-home" id="hubBarShotsHome" style="width: 50%;"></div>
+            <div class="hub-stat-progress-away" id="hubBarShotsAway" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <!-- Corners -->
+        <div class="hub-stat-row">
+          <div class="hub-stat-label-wrap">
+            <span id="hubStatCornersHome">0</span>
+            <span class="hub-stat-label-center">Corners</span>
+            <span id="hubStatCornersAway">0</span>
+          </div>
+          <div class="hub-stat-progress">
+            <div class="hub-stat-progress-home" id="hubBarCornersHome" style="width: 50%;"></div>
+            <div class="hub-stat-progress-away" id="hubBarCornersAway" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <!-- Fouls -->
+        <div class="hub-stat-row">
+          <div class="hub-stat-label-wrap">
+            <span id="hubStatFoulsHome">0</span>
+            <span class="hub-stat-label-center">Fouls Committed</span>
+            <span id="hubStatFoulsAway">0</span>
+          </div>
+          <div class="hub-stat-progress">
+            <div class="hub-stat-progress-home" id="hubBarFoulsHome" style="width: 50%;"></div>
+            <div class="hub-stat-progress-away" id="hubBarFoulsAway" style="width: 50%;"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right Column: Match Events Chronological Timeline -->
+    <section class="hub-section-card" id="hubTimelineSection">
+      <h3 class="hub-section-title">⏱️ Match Events Timeline</h3>
+      <div class="scorecard-timeline" style="border: none; padding: 0; margin: 0; max-height: 230px; overflow-y: auto;">
+        <div class="timeline-list" id="hubTimelineList" style="padding-left: 0.5rem;">
+          <div class="empty-timeline">No events recorded</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roster Squads List (Bottom Left or full width on small screens) -->
+    <section class="hub-section-card" style="grid-column: 1 / -1;">
+      <h3 class="hub-section-title">👥 Team Roster Lineups</h3>
+      <div class="hub-lineups-grid">
+        <!-- Home Team Squad -->
+        <div class="hub-squad-col">
+          <h4 class="hub-squad-title home" id="hubHomeSquadTitle">Home Squad</h4>
+          <ul class="hub-player-list" id="hubHomePlayerList">
+            <li class="empty-lineup">Lineup not selected yet</li>
+          </ul>
+        </div>
+        <!-- Away Team Squad -->
+        <div class="hub-squad-col">
+          <h4 class="hub-squad-title away" id="hubAwaySquadTitle">Away Squad</h4>
+          <ul class="hub-player-list" id="hubAwayPlayerList">
+            <li class="empty-lineup">Lineup not selected yet</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming Matches List -->
+    <section class="hub-section-card" style="grid-column: 1 / -1;">
+      <h3 class="hub-section-title">📅 Matchday Fixtures Lobby</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Fixture</th>
+              <th>Venue</th>
+              <th>Date & Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="hubFixturesListBody">
+            <tr><td colspan="4" style="text-align: center; color: var(--muted);">Loading fixtures...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Navigation Hub Cards -->
+    <div class="hub-nav-cards">
+      <a class="hub-nav-card" id="enterLiveCenterBtn" href="/scoreboard">
+        <div class="hub-nav-icon">📺</div>
+        <div class="hub-nav-details">
+          <h4>Enter Full Scoreboard Screen</h4>
+          <p>Launches full scoreboard presentation graphics board in real-time mode.</p>
+        </div>
+      </a>
+
+      <a class="hub-nav-card" href="/admin">
+        <div class="hub-nav-icon">⚙️</div>
+        <div class="hub-nav-details">
+          <h4>Open Operations Desk</h4>
+          <p>Access admin center controls to set scores, card triggers, timer clocks, and rosters.</p>
+        </div>
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="main-footer" style="margin-top: 3rem;">
+    <p>&copy; 2026 Rahula College Football Matchday Center. Powered by Socket.IO real-time sync.</p>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let state = { teams: [], players: [], matches: [], events: [], lineups: [], playerStats: [] };
+    let selectedMatchId = null;
+
+    const hubMatchSelect = document.getElementById('hubMatchSelect');
+    const enterLiveCenterBtn = document.getElementById('enterLiveCenterBtn');
+
+    function formatDate(value) {
+      if (!value) return 'TBD';
+      const date = new Date(value);
+      return date.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+    }
+
+    function formatTime(seconds) {
+      if (!seconds && seconds !== 0) return '00:00';
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function renderDashboard() {
+      // Find Selected Match
+      let match = state.matches?.find(m => m.id === selectedMatchId);
+      
+      // Default fallback to first LIVE/HT match or just the first match in list
+      if (!match && state.matches && state.matches.length > 0) {
+        match = state.matches.find(m => m.status === 'LIVE' || m.status === 'HT') || state.matches[0];
+        if (match) {
+          selectedMatchId = match.id;
+          hubMatchSelect.value = match.id;
+        }
+      }
+
+      // Update Live scoreboard link query
+      if (match) {
+        enterLiveCenterBtn.href = `/scoreboard?matchId=${match.id}`;
+      } else {
+        enterLiveCenterBtn.href = `/scoreboard`;
+      }
+
+      const heroScoreboardSection = document.getElementById('heroScoreboardSection');
+      if (!match) {
+        // Render Empty state placeholder
+        heroScoreboardSection.innerHTML = `
+          <div style="text-align: center; padding: 3rem; color: var(--muted);">
+            <h3>🏟️ No matches created yet</h3>
+            <p>Go to the Admin Operations Desk at the bottom to register team schools and schedule matches.</p>
+          </div>
+        `;
+        document.getElementById('hubStatsContainer').innerHTML = '<div style="text-align:center;color:var(--muted);padding:1rem;">No statistics available</div>';
+        document.getElementById('hubTimelineList').innerHTML = '<div style="text-align:center;color:var(--muted);padding:1rem;">No events recorded</div>';
+        document.getElementById('hubHomePlayerList').innerHTML = '<li>--</li>';
+        document.getElementById('hubAwayPlayerList').innerHTML = '<li>--</li>';
+        return;
+      }
+
+      // Restore hero scoreboard HTML if it was replaced by empty placeholder
+      if (!document.getElementById('heroHomeName')) {
+        location.reload(); // Simple reload to restore DOM tree
+        return;
+      }
+
+      // Populate Hero Card details
+      document.getElementById('heroVenue').textContent = `📍 ${match.venue || 'School Grounds'}`;
+      document.getElementById('heroReferee').textContent = `👤 Referee: ${match.referee || 'TBD'}`;
+      document.getElementById('heroDate').textContent = `📅 Date: ${formatDate(match.date)}`;
+      
+      const badge = document.getElementById('heroStatusBadge');
+      const statusUpper = (match.status || '').toUpperCase();
+      badge.textContent = statusUpper || 'SCHEDULED';
+      badge.className = 'badge-status';
+      if (['LIVE', '1H', '2H', 'IN_PROGRESS', 'HT', 'HALF_TIME'].includes(statusUpper)) {
+        badge.classList.add('live');
+        badge.style.background = 'rgba(69, 178, 107, 0.15)';
+        badge.style.color = 'var(--success)';
+        badge.style.borderColor = 'rgba(69, 178, 107, 0.3)';
+      } else {
+        badge.style.background = 'rgba(255,255,255,0.05)';
+        badge.style.color = 'var(--muted)';
+        badge.style.borderColor = 'rgba(255,255,255,0.08)';
+      }
+
+      document.getElementById('heroHomeName').textContent = match.home_team_name || 'Home';
+      document.getElementById('heroAwayName').textContent = match.away_team_name || 'Away';
+      document.getElementById('heroHomeLogo').src = match.home_team_logo || 'https://placehold.co/100/1a1a2e/ffffff?text=HOME';
+      document.getElementById('heroAwayLogo').src = match.away_team_logo || 'https://placehold.co/100/1a1a2e/ffffff?text=AWAY';
+
+      document.getElementById('heroHomeScore').textContent = match.home_score || 0;
+      document.getElementById('heroAwayScore').textContent = match.away_score || 0;
+
+      const timerClock = document.getElementById('heroTimerClock');
+      timerClock.textContent = formatTime(match.match_time_seconds);
+      if (match.timer_running) {
+        timerClock.classList.add('live');
+      } else {
+        timerClock.classList.remove('live');
+      }
+
+      // 1. Stats Bars
+      const possHome = match.home_possession || 50;
+      const possAway = match.away_possession || 50;
+      document.getElementById('hubStatPossHome').textContent = possHome + '%';
+      document.getElementById('hubStatPossAway').textContent = possAway + '%';
+      document.getElementById('hubBarPossHome').style.width = possHome + '%';
+      document.getElementById('hubBarPossAway').style.width = possAway + '%';
+
+      const shotsHome = match.home_shots || 0;
+      const shotsAway = match.away_shots || 0;
+      const shotsPct = (shotsHome + shotsAway) > 0 ? (shotsHome / (shotsHome + shotsAway)) * 100 : 50;
+      document.getElementById('hubStatShotsHome').textContent = shotsHome;
+      document.getElementById('hubStatShotsAway').textContent = shotsAway;
+      document.getElementById('hubBarShotsHome').style.width = shotsPct + '%';
+      document.getElementById('hubBarShotsAway').style.width = (100 - shotsPct) + '%';
+
+      const cornersHome = match.home_corners || 0;
+      const cornersAway = match.away_corners || 0;
+      const cornersPct = (cornersHome + cornersAway) > 0 ? (cornersHome / (cornersHome + cornersAway)) * 100 : 50;
+      document.getElementById('hubStatCornersHome').textContent = cornersHome;
+      document.getElementById('hubStatCornersAway').textContent = cornersAway;
+      document.getElementById('hubBarCornersHome').style.width = cornersPct + '%';
+      document.getElementById('hubBarCornersAway').style.width = (100 - cornersPct) + '%';
+
+      const foulsHome = match.home_fouls || 0;
+      const foulsAway = match.away_fouls || 0;
+      const foulsPct = (foulsHome + foulsAway) > 0 ? (foulsHome / (foulsHome + foulsAway)) * 100 : 50;
+      document.getElementById('hubStatFoulsHome').textContent = foulsHome;
+      document.getElementById('hubStatFoulsAway').textContent = foulsAway;
+      document.getElementById('hubBarFoulsHome').style.width = foulsPct + '%';
+      document.getElementById('hubBarFoulsAway').style.width = (100 - foulsPct) + '%';
+
+      // 2. Timeline List
+      const matchEvents = state.events?.filter(e => e.match_id === match.id).sort((a, b) => a.timestamp_seconds - b.timestamp_seconds) || [];
+      const timelineList = document.getElementById('hubTimelineList');
+      if (matchEvents.length === 0) {
+        timelineList.innerHTML = '<div class="empty-timeline">No events recorded yet</div>';
+      } else {
+        timelineList.innerHTML = matchEvents.map(evt => {
+          let icon = '⚽';
+          if (evt.type === 'yellow') icon = '🟨';
+          else if (evt.type === 'red') icon = '🟥';
+          else if (evt.type === 'corner') icon = '⭕';
+          else if (evt.type === 'substitution') icon = '🔁';
+          
+          let text = `${icon} ${evt.player_name || ''}`;
+          if (evt.type === 'substitution') {
+            text = `🔁 Out: ${evt.player_name || ''} / In: ${evt.related_player_name || ''}`;
+          } else if (evt.type === 'goal' && evt.assist_player_name) {
+            text += ` (Assist: ${evt.assist_player_name})`;
+          }
+          return `<div class="timeline-event ${evt.type}"><span class="event-time">${formatTime(evt.timestamp_seconds)}'</span><span class="event-text">${text}</span></div>`;
+        }).join('');
+      }
+
+      // 3. Live commentary ticker text
+      const tickerText = document.getElementById('heroTickerText');
+      if (matchEvents.length > 0) {
+        const latestEvent = matchEvents[matchEvents.length - 1];
+        let tickerMsg = `${latestEvent.type.toUpperCase()} at ${formatTime(latestEvent.timestamp_seconds)}' by ${latestEvent.player_name || 'Unknown'}`;
+        if (latestEvent.type === 'substitution') {
+          tickerMsg = `🔁 SUBSTITUTION: ${latestEvent.player_name} off, ${latestEvent.related_player_name} on`;
+        }
+        tickerText.textContent = tickerMsg;
+      } else {
+        tickerText.textContent = 'Waiting for live match event actions...';
+      }
+
+      // 4. Lineups Lists
+      const matchLineups = state.lineups?.filter(l => l.match_id === match.id) || [];
+      const homeLineups = matchLineups.filter(l => l.team_name === match.home_team_name && l.role === 'starter');
+      const awayLineups = matchLineups.filter(l => l.team_name === match.away_team_name && l.role === 'starter');
+
+      document.getElementById('hubHomeSquadTitle').textContent = `${match.home_team_name || 'Home'} Starting XI`;
+      document.getElementById('hubAwaySquadTitle').textContent = `${match.away_team_name || 'Away'} Starting XI`;
+
+      const renderSquadList = (list, elementId) => {
+        const el = document.getElementById(elementId);
+        if (list.length === 0) {
+          el.innerHTML = '<li class="empty-lineup">Lineup not selected yet</li>';
+        } else {
+          el.innerHTML = list.map(l => `
+            <li class="hub-player-item">
+              <span class="hub-jersey-num">#${l.number || '?'}</span>
+              <span>${l.player_name}</span>
+              <span class="hub-player-pos">${l.position || 'Roster'}</span>
+            </li>
+          `).join('');
+        }
+      };
+
+      renderSquadList(homeLineups, 'hubHomePlayerList');
+      renderSquadList(awayLineups, 'hubAwayPlayerList');
+    }
+
+    function renderFixturesTable() {
+      const fixturesBody = document.getElementById('hubFixturesListBody');
+      if (!fixturesBody) return;
+
+      if (!state.matches || state.matches.length === 0) {
+        fixturesBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--muted);">No fixtures scheduled.</td></tr>';
+        return;
+      }
+
+      // Show other fixtures (excluding active selected match for clarity, or listing all)
+      fixturesBody.innerHTML = state.matches.map(m => `
+        <tr style="cursor: pointer; font-weight: ${m.id === selectedMatchId ? '700' : 'normal'}; background: ${m.id === selectedMatchId ? 'rgba(63, 169, 245, 0.05)' : 'transparent'};" onclick="selectActiveMatch(${m.id})">
+          <td style="padding: 0.75rem 0.5rem;">${m.home_team_name} vs ${m.away_team_name}</td>
+          <td style="padding: 0.75rem 0.5rem; color: var(--text-muted)">📍 ${m.venue || 'School Grounds'}</td>
+          <td style="padding: 0.75rem 0.5rem;">${formatDate(m.date)}</td>
+          <td style="padding: 0.75rem 0.5rem;"><span class="badge-status ${m.status === 'LIVE' || m.status === 'HT' ? 'live' : ''}" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">${m.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function selectActiveMatch(matchId) {
+      selectedMatchId = matchId;
+      hubMatchSelect.value = matchId;
+      renderDashboard();
+      renderFixturesTable();
+    }
+
+    function updateMatchSelector() {
+      if (!state.matches || state.matches.length === 0) {
+        hubMatchSelect.innerHTML = '<option value="">No matches scheduled</option>';
+        return;
+      }
+
+      const currentVal = hubMatchSelect.value;
+      hubMatchSelect.innerHTML = state.matches.map(m => `
+        <option value="${m.id}">${m.home_team_name} vs ${m.away_team_name} (${m.status})</option>
+      `).join('');
+
+      if (currentVal && state.matches.some(m => m.id == currentVal)) {
+        hubMatchSelect.value = currentVal;
+      }
+    }
+
+    // Load initial state
+    async function loadInitialData() {
+      try {
+        const res = await fetch('/api/state');
+        state = await res.json();
+        updateMatchSelector();
+        renderDashboard();
+        renderFixturesTable();
+      } catch (err) {
+        console.error('Failed to load matchday initial data:', err);
+      }
+    }
+
+    // Dropdown change listener
+    hubMatchSelect.addEventListener('change', (e) => {
+      selectedMatchId = Number(e.target.value) || null;
+      renderDashboard();
+      renderFixturesTable();
+    });
+
+    // Realtime state sync
+    const socket = io();
+    socket.on('state', (newState) => {
+      state = newState;
+      updateMatchSelector();
+      renderDashboard();
+      renderFixturesTable();
+    });
+
+    // Local real-time timer ticking for the home page dashboard clock
+    setInterval(() => {
+      if (!state || !state.matches) return;
+      const match = state.matches.find(m => m.id === selectedMatchId);
+      if (!match || !match.timer_running) return;
+      match.match_time_seconds = (match.match_time_seconds || 0) + 1;
+      const timerClock = document.getElementById('heroTimerClock');
+      if (timerClock) {
+        timerClock.textContent = formatTime(match.match_time_seconds);
+      }
+    }, 1000);
+
+    window.addEventListener('DOMContentLoaded', loadInitialData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Rahula College Football</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #050508;
+      --panel:  #080c14;
+      --p2:     #0c1020;
+      --p3:     #101528;
+      --blue:   #1e6fff;
+      --blue2:  #0051cc;
+      --gold:   #d4af37;
+      --gold2:  #f5d76e;
+      --text:   #eef2ff;
+      --muted:  #5a6a8a;
+      --border: rgba(255,255,255,0.06);
+      --bdr-b:  rgba(30,111,255,0.25);
+      --bdr-g:  rgba(212,175,55,0.25);
+      --success:#22c55e;
+      --danger: #ef4444;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(30,111,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,111,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--blue), var(--gold), transparent);
+      z-index: 300;
+    }
+
+    /* ── Admin Header ── */
+    .admin-header {
+      position: sticky;
+      top: 3px;
+      z-index: 200;
+      background: rgba(5,5,8,0.94);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--bdr-b);
+      padding: 0.8rem 2rem;
+    }
+    .admin-header-inner {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .admin-brand {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-right: auto;
+    }
+    .admin-brand img { height: 30px; filter: drop-shadow(0 0 6px rgba(212,175,55,0.4)); }
+    .admin-brand .g { color: var(--gold); }
+    .admin-brand .b { color: var(--blue); }
+
+    /* Match selector in header */
+    .header-select-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .header-match-select {
+      background: var(--p2);
+      border: 1px solid var(--bdr-b);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      outline: none;
+      min-width: 240px;
+    }
+    .header-match-select:focus { border-color: var(--blue); }
+
+    .hdr-btn {
+      padding: 0.45rem 0.9rem;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .hdr-btn-blue {
+      background: rgba(30,111,255,0.12);
+      border-color: var(--bdr-b);
+      color: #7eb6ff;
+    }
+    .hdr-btn-blue:hover { background: rgba(30,111,255,0.22); color: #fff; }
+    .hdr-btn-gold {
+      background: rgba(212,175,55,0.1);
+      border-color: var(--bdr-g);
+      color: var(--gold);
+    }
+    .hdr-btn-gold:hover { background: rgba(212,175,55,0.2); }
+    .hdr-btn-red {
+      background: rgba(239,68,68,0.08);
+      border-color: rgba(239,68,68,0.25);
+      color: #f87171;
+    }
+    .hdr-btn-red:hover { background: rgba(239,68,68,0.18); }
+
+    /* ── Layout ── */
+    .admin-layout {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 6rem;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* ── Card ── */
+    .a-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.75rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .a-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bdr-g), transparent);
+    }
+    .a-card.blue-accent::before {
+      background: linear-gradient(90deg, transparent, var(--bdr-b), transparent);
+    }
+
+    .a-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .a-section-title.blue { color: #7eb6ff; }
+    .a-section-title::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--bdr-g), transparent);
+    }
+    .a-section-title.blue::after { background: linear-gradient(90deg, var(--bdr-b), transparent); }
+
+    /* ── Grid ── */
+    .a-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .a-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+    @media (max-width:900px) { .a-grid-2,.a-grid-3 { grid-template-columns: 1fr; } }
+
+    /* ── Form elements ── */
+    .f-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .f-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .f-input, .f-select, .f-textarea {
+      background: var(--p2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.6rem 0.85rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .f-input:focus, .f-select:focus, .f-textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(30,111,255,0.12);
+    }
+    .f-input::placeholder { color: var(--muted); }
+    .f-select option { background: var(--p2); }
+    .f-textarea { resize: vertical; min-height: 70px; }
+    .logo-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .logo-open-btn {
+      flex-shrink: 0;
+      min-width: 72px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.82rem;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 0.65rem 1.25rem;
+      border-radius: 9px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(30,111,255,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(30,111,255,0.5); }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #b8960d);
+      border-color: transparent;
+      color: #000;
+      box-shadow: 0 4px 16px rgba(212,175,55,0.3);
+    }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(212,175,55,0.45); }
+    .btn-danger {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.3);
+      color: #f87171;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover { border-color: var(--blue); color: #7eb6ff; }
+    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.75rem; border-radius: 6px; }
+    .btn[disabled] { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Live control panel ── */
+    .live-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--p2);
+      border: 1px solid var(--bdr-b);
+      border-radius: 10px;
+    }
+    .score-display .sc {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .score-display .sc.home { color: #7eb6ff; }
+    .score-display .sc.away { color: var(--gold2); }
+    .score-display .sep { color: var(--muted); font-size: 1.4rem; }
+
+    .score-btn-group { display: flex; flex-direction: column; gap: 4px; }
+    .score-mini {
+      width: 28px; height: 22px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--p3);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .score-mini:hover { background: var(--p2); }
+
+    /* ── Event row ── */
+    .event-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .event-row .f-input, .event-row .f-select {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    /* ── Player table ── */
+    .player-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .player-table th {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 0.4rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .player-table td {
+      padding: 0.25rem 0.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      vertical-align: middle;
+    }
+    .player-table tr:hover td { background: rgba(255,255,255,0.015); }
+    .player-table .f-input, .player-table .f-select {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+    }
+    .player-table .num-input { width: 60px; }
+
+    /* ── Match list ── */
+    .match-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .match-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.1rem;
+      background: var(--p2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.2s, background 0.2s;
+      flex-wrap: wrap;
+    }
+    .match-item:hover { border-color: var(--bdr-b); }
+    .match-item.active { border-color: var(--blue); background: rgba(30,111,255,0.07); }
+    .match-item-vs {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      flex: 1;
+    }
+    .match-item-meta { color: var(--muted); font-size: 0.8rem; }
+
+    .status-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .pill-scheduled { background: rgba(255,255,255,0.04); border-color: var(--border); color: var(--muted); }
+    .pill-live      { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.35); color: #22c55e; }
+    .pill-ft        { background: rgba(30,111,255,0.1); border-color: var(--bdr-b); color: #7eb6ff; }
+
+    /* ── Notification toast ── */
+    .toast-area {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid;
+      backdrop-filter: blur(10px);
+      animation: fadeSlide 0.3s ease;
+      max-width: 300px;
+    }
+    .toast-success { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: #4ade80; }
+    .toast-error   { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #f87171; }
+    .toast-info    { background: rgba(30,111,255,0.12); border-color: var(--bdr-b); color: #7eb6ff; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Collapsible section */
+    .collapse-toggle {
+      cursor: pointer;
+      user-select: none;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: none;
+      border: none;
+      padding: 0 0 1.25rem;
+    }
+    .collapse-toggle .chevron { transition: transform 0.2s; margin-left: auto; }
+    .collapse-toggle.open .chevron { transform: rotate(180deg); }
+    .collapse-body { display: none; }
+    .collapse-body.open { display: block; }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bdr-g), transparent);
+      margin: 1.5rem 0;
+    }
+
+    /* Team panel header */
+    .team-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .team-panel-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .home-title { color: #7eb6ff; }
+    .away-title { color: var(--gold2); }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 8, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+      transform: scale(0.92);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bdr-b), transparent);
+    }
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.4rem;
+      transition: color 0.15s;
+    }
+    .modal-close:hover {
+      color: var(--text);
+    }
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    /* ══════════════════════════════
+       PREMIUM TIMER WIDGET
+    ══════════════════════════════ */
+    .timer-widget {
+      background: linear-gradient(145deg, #0a1022, #080c18);
+      border: 1px solid rgba(30,111,255,0.18);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem 1.5rem;
+      margin-bottom: 1.55rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .timer-widget::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--gold), var(--blue), transparent);
+    }
+    /* Ambient glow behind ring */
+    .timer-widget::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,111,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .timer-inner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (max-width: 750px) {
+      .timer-inner { grid-template-columns: 1fr; justify-items: center; }
+    }
+
+    /* ── Ring ── */
+    .timer-ring-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+    .timer-ring-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+    }
+    .timer-ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.05);
+      stroke-width: 6;
+    }
+    .timer-ring-fill {
+      fill: none;
+      stroke: url(#timerGrad);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 408;
+      stroke-dashoffset: 408;
+      transition: stroke-dashoffset 0.9s ease;
+    }
+    .timer-ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    #liveMatchClock {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(30,111,255,0.5);
+    }
+    .timer-ring-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Pulse ring when running */
+    .timer-pulse {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid rgba(30,111,255,0.35);
+      animation: none;
+      opacity: 0;
+    }
+    .timer-running .timer-pulse {
+      animation: timerPulse 2s ease-in-out infinite;
+      opacity: 1;
+    }
+    @keyframes timerPulse {
+      0%   { transform: scale(1);    opacity: 0.6; }
+      50%  { transform: scale(1.06); opacity: 0.15; }
+      100% { transform: scale(1);    opacity: 0.6; }
+    }
+    /* Live dot */
+    .timer-live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+      margin-right: 5px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .timer-running .timer-live-dot {
+      opacity: 1;
+      animation: dotBlink 1.2s ease-in-out infinite;
+    }
+    @keyframes dotBlink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    /* ── Right side controls ── */
+    .timer-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Status strip */
+    .timer-status-strip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .timer-status-text {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.68rem;
+    }
+
+    /* Play / Pause / Reset row */
+    .timer-btn-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .btn-timer-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(30,111,255,0.45);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-timer-play::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn-timer-play:hover { transform: translateY(-2px); box-shadow: 0 6px 26px rgba(30,111,255,0.6); }
+    .btn-timer-play:hover::before { opacity: 1; }
+    .btn-timer-play:active { transform: translateY(0); }
+
+    .btn-timer-pause {
+      background: linear-gradient(135deg, #2a2a3a, #1a1a28) !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    .btn-timer-pause:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.5) !important; }
+
+    .btn-timer-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(239,68,68,0.3);
+      background: rgba(239,68,68,0.07);
+      color: #f87171;
+      transition: all 0.2s;
+    }
+    .btn-timer-reset:hover {
+      background: rgba(239,68,68,0.15);
+      border-color: rgba(239,68,68,0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Divider */
+    .timer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+
+    /* Quick-jump half buttons */
+    .timer-quick-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .timer-quick-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .btn-timer-quick {
+      padding: 0.4rem 0.8rem;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--p3);
+      color: var(--muted);
+      transition: all 0.18s;
+    }
+    .btn-timer-quick:hover {
+      border-color: var(--blue);
+      color: #7eb6ff;
+      background: rgba(30,111,255,0.1);
+      transform: translateY(-1px);
+    }
+    .btn-timer-quick.gold:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212,175,55,0.1);
+    }
+
+    /* Set minute row */
+    .timer-set-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .timer-set-row .f-input {
+      width: 72px;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* Status select row */
+    .timer-status-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .timer-status-row .f-select {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar"></div>
+
+  <!-- ────────────────── HEADER ────────────────── -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-brand">
+        <img src="/Rahula-Crest-SinhalaRGB.png" alt="Crest"
+             onerror="this.src='https://placehold.co/30/050508/d4af37?text=RC'">
+        <span><span class="g">ADMIN</span> <span class="b">PANEL</span></span>
+      </div>
+
+      <span class="header-select-label">Active Match:</span>
+      <select class="header-match-select" id="globalMatchSelect">
+        <option value="">— Select Match —</option>
+      </select>
+
+      <a href="/scoreboard" class="hdr-btn hdr-btn-blue" target="_blank">📺 View Scoreboard</a>
+      <button id="logoutBtn" class="hdr-btn hdr-btn-red">🔓 Logout</button>
+    </div>
+  </header>
+
+  <!-- ────────────────── LAYOUT ────────────────── -->
+  <div class="admin-layout">
+
+    <!-- ══════════════ 1. LIVE CONTROLS ══════════════ -->
+    <div class="a-card blue-accent" id="liveControlsCard">
+      <div class="a-section-title blue">⚡ Live Match Controls</div>
+
+      <!-- Current match display -->
+      <div style="margin-bottom:1.25rem" id="noMatchMsg">
+        <p style="color:var(--muted);font-size:0.9rem">No match selected. Choose or create a match below.</p>
+      </div>
+      <div id="liveMatchDisplay" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem">
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800" id="liveMatchTitle">Match</div>
+            <div style="font-size:0.8rem;color:var(--muted)" id="liveMatchMeta">—</div>
+          </div>
+        </div>
+
+        <!-- ══ PREMIUM TIMER WIDGET ══ -->
+        <div class="timer-widget" id="timerWidget">
+          <div class="timer-inner" style="display: flex; gap: 2rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            
+            <!-- Left side: Re-created Clock Display from Scratch -->
+            <div class="timer-display-box" style="display: flex; align-items: center; gap: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 1rem 1.5rem; border-radius: 12px;">
+              <span id="timerLiveDot" style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+              <div id="liveMatchClock" style="font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 900; color: #fff; line-height: 1; min-width: 130px; letter-spacing: -0.02em;">00:00</div>
+              <div style="font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;">Match Clock</div>
+            </div>
+
+            <!-- Right side: Re-created Action Button Controls -->
+            <div class="timer-actions-box" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <button class="btn btn-danger" id="timerResetBtn" style="padding: 0.75rem 1.25rem; font-weight: 800; border-radius: 10px;">
+                Reset
+              </button>
+            </div>
+
+            <!-- Full Width Dividers and presets -->
+            <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.06); margin: 0.5rem 0;"></div>
+
+            <!-- Presets & Adjusters -->
+            <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; width: 100%; justify-content: space-between;">
+              
+              <!-- Quick Preset jumps -->
+              <div>
+                <div style="font-size: 0.65rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 0.08em;">Quick Presets</div>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-outline btn-sm" id="quickBtn0">0'</button>
+                  <button class="btn btn-outline btn-sm" id="quickBtn45">45'</button>
+                  <button class="btn btn-outline btn-sm" id="quickBtn90">90'</button>
+                  <button class="btn btn-outline btn-sm" id="quickBtnHT">HT</button>
+                  <button class="btn btn-outline btn-sm" id="quickBtnFT">FT</button>
+                </div>
+              </div>
+
+              <!-- Set Custom Time -->
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="text-align: right;">
+                  <div style="font-size: 0.65rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.2rem; letter-spacing: 0.08em;">Set Minute</div>
+                  <input class="f-input" id="timerSecondsInput" type="number" min="0" max="120" value="0" style="width: 70px; text-align: center; font-weight: 700; height: 32px; padding: 0;">
+                </div>
+                <button class="btn btn-outline btn-sm" id="timerSetBtn" style="align-self: flex-end; height: 32px;">Go</button>
+              </div>
+
+              <!-- Set Match Status Phase -->
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div>
+                  <div style="font-size: 0.65rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.2rem; letter-spacing: 0.08em;">Status / Phase</div>
+                  <select class="f-select" id="statusSelect" style="height: 32px; padding: 0 0.5rem; font-size: 0.8rem; min-width: 120px;">
+                    <option value="scheduled">Scheduled</option>
+                    <option value="1h">1st Half</option>
+                    <option value="half_time">Half Time</option>
+                    <option value="2h">2nd Half</option>
+                    <option value="full_time">Full Time</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary btn-sm" id="updateStatusBtn" style="align-self: flex-end; height: 32px;">Set</button>
+              </div>
+
+              <!-- Phase Display Badge -->
+              <div style="text-align: right;">
+                <div style="font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;">Current Status</div>
+                <span id="timerStatusLabel" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: #fff;">Scheduled</span>
+              </div>
+
+            </div>
+
+          </div>
+        </div><!-- /timer-widget -->
+
+        <!-- Stats Quick Controls -->
+        <div class="a-grid-2" style="margin-bottom:1.25rem">
+          <!-- Home Team Stats Panel -->
+          <div style="background:var(--p2);border:1px solid rgba(30,111,255,0.15);border-radius:12px;padding:1rem">
+            <div style="color:#7eb6ff;font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center">
+              <span id="statHomeTeamLabel">Home Team</span>
+              <span class="sc home" id="liveHomeScore">0</span>
+            </div>
+            
+            <div style="display:flex;flex-direction:column;gap:0.6rem">
+              <!-- Goals controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⚽ Goals</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <button class="score-mini" id="homeScoreDown">-</button>
+                  <button class="score-mini" id="homeScoreUp">+</button>
+                </div>
+              </div>
+              <!-- Corners controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⭕ Corners</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statHomeCorners" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="homeCornersDown">-</button>
+                  <button class="score-mini" id="homeCornersUp">+</button>
+                </div>
+              </div>
+              <!-- Fouls controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⚠️ Fouls</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statHomeFouls" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="homeFoulsDown">-</button>
+                  <button class="score-mini" id="homeFoulsUp">+</button>
+                </div>
+              </div>
+              <!-- Shots controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🎯 Shots on Target</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statHomeShots" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="homeShotsDown">-</button>
+                  <button class="score-mini" id="homeShotsUp">+</button>
+                </div>
+              </div>
+              <!-- Yellow Cards -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🟨 Yellow Cards</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statHomeYellow" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="homeYellowDown">-</button>
+                  <button class="score-mini" id="homeYellowUp">+</button>
+                </div>
+              </div>
+              <!-- Red Cards -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🟥 Red Cards</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statHomeRed" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="homeRedDown">-</button>
+                  <button class="score-mini" id="homeRedUp">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Away Team Stats Panel -->
+          <div style="background:var(--p2);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:1rem">
+            <div style="color:var(--gold2);font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center">
+              <span id="statAwayTeamLabel">Away Team</span>
+              <span class="sc away" id="liveAwayScore">0</span>
+            </div>
+            
+            <div style="display:flex;flex-direction:column;gap:0.6rem">
+              <!-- Goals controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⚽ Goals</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <button class="score-mini" id="awayScoreDown">-</button>
+                  <button class="score-mini" id="awayScoreUp">+</button>
+                </div>
+              </div>
+              <!-- Corners controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⭕ Corners</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statAwayCorners" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="awayCornersDown">-</button>
+                  <button class="score-mini" id="awayCornersUp">+</button>
+                </div>
+              </div>
+              <!-- Fouls controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>⚠️ Fouls</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statAwayFouls" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="awayFoulsDown">-</button>
+                  <button class="score-mini" id="awayFoulsUp">+</button>
+                </div>
+              </div>
+              <!-- Shots controls -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🎯 Shots on Target</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statAwayShots" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="awayShotsDown">-</button>
+                  <button class="score-mini" id="awayShotsUp">+</button>
+                </div>
+              </div>
+              <!-- Yellow Cards -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🟨 Yellow Cards</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statAwayYellow" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="awayYellowDown">-</button>
+                  <button class="score-mini" id="awayYellowUp">+</button>
+                </div>
+              </div>
+              <!-- Red Cards -->
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem">
+                <span>🟥 Red Cards</span>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span id="statAwayRed" style="color:var(--muted);font-weight:600">0</span>
+                  <button class="score-mini" id="awayRedDown">-</button>
+                  <button class="score-mini" id="awayRedUp">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Possession & MVP selector -->
+        <div style="display:flex;gap:1.25rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem;background:var(--p2);padding:1rem;border-radius:12px;border:1px solid var(--border)">
+          <div class="f-group" style="flex:1;min-width:180px">
+            <label class="f-label">Possession % (Home)</label>
+            <div style="display:flex;gap:0.5rem">
+              <input class="f-input" id="possInput" type="number" min="0" max="100" value="50">
+              <button class="btn btn-outline" id="updatePossBtn" style="white-space:nowrap">Set Possession</button>
+            </div>
+          </div>
+          <div class="f-group" style="flex:1;min-width:220px">
+            <label class="f-label">Match MVP</label>
+            <div style="display:flex;gap:0.5rem">
+              <select class="f-select" id="mvpSelect">
+                <option value="">— Select MVP —</option>
+              </select>
+              <button class="btn btn-outline" id="updateMvpBtn" style="white-space:nowrap">Set MVP</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick event logger -->
+        <div class="divider"></div>
+        <div class="a-section-title blue" style="margin-bottom:0.85rem">📝 Log Custom Event</div>
+        <div class="event-row">
+          <input class="f-input" id="eventMinute" type="number" placeholder="Min" min="1" max="120" style="width:70px;flex:0 0 70px">
+          <select class="f-select" id="eventType">
+            <option value="goal">⚽ Goal</option>
+            <option value="own_goal">⚽ Own Goal</option>
+            <option value="yellow_card">🟨 Yellow Card</option>
+            <option value="red_card">🟥 Red Card</option>
+            <option value="substitution">🔄 Substitution</option>
+            <option value="corner">⭕ Corner</option>
+            <option value="foul">⚠️ Foul</option>
+            <option value="penalty">🎯 Penalty</option>
+            <option value="save">🧤 Save</option>
+            <option value="shot">🎯 Shot on Target</option>
+          </select>
+          <select class="f-select" id="eventTeamSide">
+            <option value="home">Home Team</option>
+            <option value="away">Away Team</option>
+          </select>
+          <input class="f-input" id="eventPlayer" type="text" placeholder="Player name">
+          <input class="f-input" id="eventAssist" type="text" placeholder="Assist (optional)">
+          <button class="btn btn-gold" id="logEventBtn">Log</button>
+        </div>
+
+        <!-- Events log -->
+        <div style="margin-top:1rem;max-height:200px;overflow-y:auto" id="eventsLogTable"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════ 2. MANAGE MATCHES ══════════════ -->
+    <div class="a-card">
+      <div class="a-section-title">🗂️ Manage Matches</div>
+
+      <div class="match-list" id="matchListContainer">
+        <div style="color:var(--muted);font-size:0.85rem">No matches found.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════ 3. CREATE MATCH ══════════════ -->
+    <div class="a-card">
+      <button class="collapse-toggle" id="createMatchToggle">
+        <span>➕ Create New Match</span>
+        <span class="chevron">▼</span>
+      </button>
+      <div class="collapse-body" id="createMatchBody">
+        <!-- 3-column grid: venue, date, referee -->
+        <div class="a-grid-3" style="margin-bottom: 1.25rem;">
+          <div class="f-group">
+            <label class="f-label" for="newVenue">Venue</label>
+            <input class="f-input" id="newVenue" type="text" placeholder="e.g. Rahula College Ground">
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="newDate">Date & Time</label>
+            <input class="f-input" id="newDate" type="datetime-local">
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="newRef">Referee</label>
+            <input class="f-input" id="newRef" type="text" placeholder="e.g. A. B. Perera">
+          </div>
+        </div>
+
+        <!-- 2-column grid: Home Team & Away Team -->
+        <div class="a-grid-2" style="margin-bottom: 1.5rem;">
+          <!-- Home Team Panel -->
+          <div style="background:var(--p2); border:1px solid rgba(30,111,255,0.15); border-radius:12px; padding:1.25rem;">
+            <div class="team-panel-header">
+              <span class="team-panel-title home-title">🔵 Home Team</span>
+            </div>
+            <div class="f-group" style="margin-bottom: 1rem;">
+              <label class="f-label" for="homeTeamName">Team Name</label>
+              <input class="f-input" id="homeTeamName" type="text" placeholder="Home Team Name">
+            </div>
+            <div class="f-group" style="margin-bottom: 1.25rem;">
+              <label class="f-label" for="homeTeamLogoFile">Logo Image</label>
+              <input class="f-input" id="homeTeamLogoFile" type="file" accept="image/*" placeholder="Upload logo image (optional)">
+              <div style="margin-top:0.45rem;font-size:0.78rem;color:var(--muted)">Optional. Upload a logo image file for the home team.</div>
+            </div>
+            
+            <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Roster Lineup</div>
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--p3);">
+              <table class="player-table">
+                <thead>
+                  <tr>
+                    <th style="width: 30px; text-align: center;">#</th>
+                    <th style="width: 70px;">Jersey</th>
+                    <th>Player Name</th>
+                    <th style="width: 90px;">Position</th>
+                    <th style="width: 50px; text-align: center;">Sub</th>
+                  </tr>
+                </thead>
+                <tbody id="homePlayerRows">
+                  <!-- Generated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Away Team Panel -->
+          <div style="background:var(--p2); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:1.25rem;">
+            <div class="team-panel-header">
+              <span class="team-panel-title away-title">🟡 Away Team</span>
+            </div>
+            <div class="f-group" style="margin-bottom: 1rem;">
+              <label class="f-label" for="awayTeamName">Team Name</label>
+              <input class="f-input" id="awayTeamName" type="text" placeholder="Away Team Name">
+            </div>
+            <div class="f-group" style="margin-bottom: 1.25rem;">
+              <label class="f-label" for="awayTeamLogoFile">Logo Image</label>
+              <input class="f-input" id="awayTeamLogoFile" type="file" accept="image/*" placeholder="Upload logo image (optional)">
+              <div style="margin-top:0.45rem;font-size:0.78rem;color:var(--muted)">Optional. Upload a logo image file for the away team.</div>
+            </div>
+
+            <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Roster Lineup</div>
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--p3);">
+              <table class="player-table">
+                <thead>
+                  <tr>
+                    <th style="width: 30px; text-align: center;">#</th>
+                    <th style="width: 70px;">Jersey</th>
+                    <th>Player Name</th>
+                    <th style="width: 90px;">Position</th>
+                    <th style="width: 50px; text-align: center;">Sub</th>
+                  </tr>
+                </thead>
+                <tbody id="awayPlayerRows">
+                  <!-- Generated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;padding-top:0.5rem;">
+          <button class="btn btn-primary" id="createMatchBtn">🚀 Create Match</button>
+          <button class="btn btn-outline" id="clearMatchFormBtn">✕ Clear Form</button>
+          <span style="font-size:0.78rem;color:var(--muted)">Teams and players will be created automatically</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ 4. EDIT ACTIVE LINEUP ══════════════ -->
+    <div class="a-card" id="editLineupCard">
+      <div class="a-section-title">✏️ Edit Active Match Lineup</div>
+      <div id="editLineupContent">
+        <p style="color:var(--muted);font-size:0.85rem">Select an active match to edit its lineup.</p>
+      </div>
+    </div>
+
+  <!-- ══════════════ ADVANCED EVENT MODAL ══════════════ -->
+  <div class="modal-overlay" id="eventModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeEventModalBtn">✕</button>
+      <div class="modal-title" id="modalTitle">⚽ Record Event</div>
+      
+      <div class="modal-form">
+        <!-- Hidden fields -->
+        <input type="hidden" id="modalEventType">
+        <input type="hidden" id="modalTeamSide">
+
+        <!-- Time/Minute of event -->
+        <div class="f-group">
+          <label class="f-label">Minute</label>
+          <input class="f-input" id="modalEventMinute" type="number" min="1" max="120" value="1">
+        </div>
+
+        <!-- Player selector -->
+        <div class="f-group">
+          <label class="f-label" id="modalPlayerLabel">Player</label>
+          <select class="f-select" id="modalEventPlayer">
+            <option value="">— Select Player —</option>
+          </select>
+        </div>
+
+        <!-- Assist selector (only for goals) -->
+        <div class="f-group" id="modalAssistGroup" style="display:none">
+          <label class="f-label">Assist By</label>
+          <select class="f-select" id="modalEventAssist">
+            <option value="">— Select Player (None) —</option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1rem">
+          <button class="btn btn-outline" id="cancelEventModalBtn">Cancel</button>
+          <button class="btn btn-gold" id="saveEventModalBtn">Record Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast area -->
+  <div class="toast-area" id="toastArea"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
